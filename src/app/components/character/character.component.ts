@@ -3,7 +3,7 @@ import { BehaviorService } from "../service/behavior.service";
 
 @Component({
   selector: 'app-character',
-  template: `<div>{{message}}</div>`
+  templateUrl: './character.component.html'
 })
 export class CharacterComponent {
   message = '';
