@@ -5,37 +5,51 @@ import { BehaviorSubject } from "rxjs";
   providedIn: 'root'
 })
 export class BehaviorService {
-  private mousePosition = new BehaviorSubject({
+  private _mousePosition = new BehaviorSubject({
     x: 0, 
     y: 0
   });  
-  private statusPosition = new BehaviorSubject({
+  private _statusPosition = new BehaviorSubject({
+    startMouseAt: "",
     dacingTimeLongest: "",
     isMouseMoved: false,
   });
 
-  status$ = this.statusPosition.asObservable();
-  mouse$ = this.mousePosition.asObservable();
-  currentMousePos = this.mousePosition;
-  formerMousePos = this.mousePosition;
+  status$ = this._statusPosition.asObservable();
+  mouse$ = this._mousePosition.asObservable();
+
+  _currentMousePos = this._mousePosition;
+  _formerMousePos = this._mousePosition;
   isMouseMoved = signal(false); // false
 
   updateMousePosition(x: number, y: number){
-    this.mousePosition.next({x, y});
-    this.currentMousePos.next({x, y}); // TODO : 형 참조 오류 확인
+    this._mousePosition.next({x, y});
+    this._currentMousePos.next({x, y}); // TODO : 형 참조 오류 확인
     this.isMouseMoved.set(this.isChangedMove(x, y));
   }
 
   isChangedMove(x: number, y: number) : boolean {
-    if(this.currentMousePos.value.x === this.formerMousePos.value.x && this.formerMousePos.value.y === this.currentMousePos.value.y){
+    if(this._currentMousePos.value.x === this._formerMousePos.value.x && this._formerMousePos.value.y === this._currentMousePos.value.y){
       return true;
     }
     else if( x+10 > x && x > x-10 || y+10 > y && y > y-10){ // 마우스 얼마 움직지 않았다면
-      this.currentMousePos.next({x,y}); 
-      this.formerMousePos.next({x,y});
+      this._currentMousePos.next({x,y}); 
+      this._formerMousePos.next({x,y});
       return true;
     }
     return false;
   }
+
+  updateStatusPosition({isMouseMoved, startMouseAt}: {isMouseMoved:boolean, startMouseAt:string}){
+    this.isMouseMoved.set(isMouseMoved);
+    this._statusPosition.value.isMouseMoved = this.isMouseMoved();
+    this._statusPosition.value.startMouseAt = startMouseAt;
+  }
+
+  updateStatusIsMouseMoved(isMouseMoved: boolean){
+    this.isMouseMoved.set(isMouseMoved);
+    this._statusPosition.value.isMouseMoved = this.isMouseMoved();
+  }
+
 
 }

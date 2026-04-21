@@ -14,14 +14,17 @@ export class App {
 
   constructor(private behaviorService: BehaviorService){}
 
+  private moveTimeout:any;
+
   @HostListener('document:mousemove', ['$event'])
   onMouseMove(e: MouseEvent){
     console.log(e.clientX, e.clientY);
     this.behaviorService.updateMousePosition(e.clientX, e.clientY);
-  }
+    this.behaviorService.updateStatusPosition({isMouseMoved:true, startMouseAt:Date.now().toString()});
 
-  // @HostListener('document:click', ['$event'])
-  // onClick(e: MouseEvent){
-  //   console.log(`clicked in : ${e.clientX, e.clientY}`);
-  // }
+    clearTimeout(this.moveTimeout); // TODO : 이거 확인
+    this.moveTimeout = setTimeout(()=>{
+      this.behaviorService.updateStatusIsMouseMoved(false);
+    }, 2000)
+  }
 }
