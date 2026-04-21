@@ -1,12 +1,13 @@
 import { Component, HostListener, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { BehaviorService } from './components/service/behavior.service';
+import { CharacterComponent } from './components/character/character.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
+  imports: [RouterOutlet, CharacterComponent],
 })
 export class App {
   protected readonly title = signal('first-chipi-ng');

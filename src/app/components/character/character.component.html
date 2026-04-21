@@ -4,8 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChipiChipiChapaChapa</title>
+    <style>
+        .container{
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            align-items: center;
+            
+        }
+        .item{
+            padding: 20px;
+        }
+    </style>
 </head>
 <body>
-    
+    <div class="container">
+        <!-- 1초 마다 양방향으로 춤추는 치피캣 -->
+        <!-- 같이 춤춘 횟수 & 최대로 같이 춤춘 시간 & 현 상태 -->
+        <!-- 사용자의 마우스가 멈춘다면 치피캣이 멈춤-->
+        <!-- 추후 : 안움직이면 dancing!! 이라고 재촉함 -->
+
+        <div class="item">
+            <div class="title">dance with chipi</div>
+            <div id="stat__dancing-time--longest" class="stat__dancing-time">{{dancingTimeLongest}}</div> <!-- 가장 오래 춤춘 시간-->
+        </div>
+        <div class="item cat">
+            <img src=`{{chipiCatImagePath}}` alt="chipicat"/>
+        </div>
+        <div class="item">
+            <div id="stat__count">000</div>
+            <div id="stat__moving">none..</div>
+            <div id="stat__dancing-time--active" class="stat__dancing-time">{{dancingTime}}</div>
+        </div>
+    </div>
 </body>
 </html>
