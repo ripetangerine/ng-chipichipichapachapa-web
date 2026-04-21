@@ -5,25 +5,25 @@ import { BehaviorSubject } from "rxjs";
   providedIn: 'root'
 })
 export class BehaviorService {
-  private mousePosition = new BehaviorSubject({x: 0, y: 0});
-  mouse$ = this.mousePosition.asObservable();
-  formerMousePos = this.mousePosition;
-  currentMousePos = this.mousePosition;
-  
-  isMouseMoved = signal(false); // false
-  
+  private mousePosition = new BehaviorSubject({
+    x: 0, 
+    y: 0
+  });  
   private statusPosition = new BehaviorSubject({
     dacingTimeLongest: "",
-    isMouseMoved: this.isMouseMoved ?? false,
+    isMouseMoved: false,
   });
+
   status$ = this.statusPosition.asObservable();
-  
+  mouse$ = this.mousePosition.asObservable();
+  currentMousePos = this.mousePosition;
+  formerMousePos = this.mousePosition;
+  isMouseMoved = signal(false); // false
 
   updateMousePosition(x: number, y: number){
     this.mousePosition.next({x, y});
     this.currentMousePos.next({x, y}); // TODO : 형 참조 오류 확인
     this.isMouseMoved.set(this.isChangedMove(x, y));
-    // this.isMouseMoved.update(prev => this.isChangedMove(x, y))
   }
 
   isChangedMove(x: number, y: number) : boolean {
@@ -38,7 +38,4 @@ export class BehaviorService {
     return false;
   }
 
-  // ngOnInit() {
-  
-  // }
 }

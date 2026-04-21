@@ -20,7 +20,7 @@ export class CharacterComponent {
   msMoveCount = signal(0);
   isMoving = signal(false);
   
-  constructor(private behaviorService: BehaviorService) {
+  constructor(private behaviorService: BehaviorService) { // 썌얘
     interval(1000)
       .pipe(takeUntilDestroyed())
       .subscribe(()=>{
