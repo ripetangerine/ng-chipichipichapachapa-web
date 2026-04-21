@@ -17,11 +17,11 @@ export class App {
   @HostListener('document:mousemove', ['$event'])
   onMouseMove(e: MouseEvent){
     console.log(e.clientX, e.clientY);
-    this.behaviorService.updateMouse(e.clientX, e.clientY);
+    this.behaviorService.updateMousePosition(e.clientX, e.clientY);
   }
 
-  @HostListener('document:click', ['$event'])
-  onClick(e: MouseEvent){
-    console.log(`clicked in : ${e.clientX, e.clientY}`);
-  }
+  // @HostListener('document:click', ['$event'])
+  // onClick(e: MouseEvent){
+  //   console.log(`clicked in : ${e.clientX, e.clientY}`);
+  // }
 }
