@@ -12,19 +12,29 @@ import { CharacterComponent } from './components/character/character.component';
 export class App {
   protected readonly title = signal('first-chipi-ng');
 
-  constructor(private behaviorService: BehaviorService){}
+  constructor(
+    private readonly _behaviorService: BehaviorService
+  ){}
 
   private moveTimeout:any;
 
   @HostListener('document:mousemove', ['$event'])
   onMouseMove(e: MouseEvent){
     console.log(e.clientX, e.clientY);
-    this.behaviorService.updateMousePosition(e.clientX, e.clientY);
-    this.behaviorService.updateStatusPosition({isMouseMoved:true, startMouseAt:Date.now().toString()});
+    this._behaviorService.updateMousePosition(e.clientX, e.clientY);
+    this._behaviorService.updateStatusPosition({isMouseMoved:true, startMouseAt:Date.now().toString()});
 
     clearTimeout(this.moveTimeout); // TODO : 이거 확인
     this.moveTimeout = setTimeout(()=>{
-      this.behaviorService.updateStatusIsMouseMoved(false);
-    }, 2000)
+      this._behaviorService.updateStatusIsMouseMoved(false);
+    }, 2000);
   }
+
+  ngOnInit(){
+    this._behaviorService.init();
+  }
+
+  // ngOnDestory(){
+  //   this._behaviorService.destory();
+  // }
 }

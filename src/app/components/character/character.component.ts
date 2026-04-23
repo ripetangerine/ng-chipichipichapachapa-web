@@ -1,7 +1,7 @@
-import { Component, computed, effect, HostListener, inject, signal, WritableSignal } from "@angular/core";
+import { Component, computed, effect, inject, signal, OnDestroy, OnInit} from "@angular/core";
 import { BehaviorService } from "../service/behavior.service";
 import { interval } from "rxjs";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
 import { AsyncPipe, DatePipe } from "@angular/common";
 
 
@@ -10,14 +10,13 @@ import { AsyncPipe, DatePipe } from "@angular/common";
   selector: 'app-character',
   templateUrl: './character.component.html'
 })
-export class CharacterComponent {
-  
+export class CharacterComponent implements OnDestroy, OnInit{
   // chipiCatImagePathEven = 'assets/chipiCatEven.jpg';
   // chipiCatImagePathOdd = 'assets/chipiCatOdd.jpg'
-  
+
   // chipiCatImagePath = this.chipiCatImagePathOdd;
   // dancingTime = signal(""); // 자리수 처리 0:00:00
-  // dancingTimeLongest = signal(""); // 움직이지 않는 시점에 긴지 확인후 넣기
+  // maxDancingTime = signal(""); // 움직이지 않는 시점에 긴지 확인후 넣기
   // msMoveCount = signal(0);
   // isMoving = signal(false);
   // stackTimer = signal(0);
@@ -37,21 +36,27 @@ export class CharacterComponent {
 
   stackTimer = signal(0);
   isMoving = signal(false);
+  dancingTime = signal(0); // 현재 유저가 연달아서 춤추고 있는 시간
+  maxDancingTime = signal(0);
 
-  dancingTime = computed(()=>{
+  DancingTimeComputed = computed(()=>{
     const sec = this.stackTimer();
     return `00:${Math.floor(sec/60)}:${(sec%60).toString().padStart(2, '0')}`;
   });
 
-  dancingTimeLongest = signal(this.dancingTime || null);
 
-  private stopEffect = effect(()=>{
+  private mouseStopEffect = effect(()=>{ // movingFalse일때의 로직
     if(!this.isMoving()){
-      this.dancingTimeLongest.update(v=>v>this.dancingTimeLongest()? v: this.dancingTimeLongest());
+      const currentDanceTime = this.stackTimer();
+      if(currentDanceTime > this.maxDancingTime()){
+        this.maxDancingTime.set(currentDanceTime);
+      }
     }
   });
 
-  
+
+
+
 
   //handler
   /**
@@ -59,21 +64,31 @@ export class CharacterComponent {
    * - 마우스 움직임 확인 (움직인다면 속도에 비례한 카운트 증가, 움직임 변수 활성화)
    * - 1초에 한번 치피캣 움직임 (사용자 빠르게 움직이면 얘도 0.5초에 한 번 움직임)
    * - dancingTime 증가
-   * 
+   *
    * 움직임이 멈춘다면
    * - isMoving -> false
    * - dancingTime -> 0
-   * - dancingTimeLongest 등록
+   * - maxDancingTime 등록
    * - 치피캣 멈춤
    */
 
 
 
 
-  // TODO : sync stream 구현 
-  ngOnInit() {
+  // TODO : sync stream 구현
+  ngOnInit(): void{
     // this.behaviorService.status$.subscribe(data => {
-    //   this.dancingTimeLongest = data.dacingTimeLongest as unknown as WritableSignal<string>;
+    //   this.maxDancingTime = data.dacingTimeLongest as unknown as WritableSignal<string>;
     // });
+    const userBehaviorStatus = toSignal(this.behaviorService.status$);
+    const userBehaviorMousePosition = toSignal(this.behaviorService.mousePosition$);
+    interval(1000)
+      .pipe(takeUntilDestroyed())
+      .subscribe(()=>this.stackTimer.update((v)=>v+1));
+
+  }
+
+  ngOnDestroy(): void {
+    throw new Error("Method not implemented.");
   }
 }

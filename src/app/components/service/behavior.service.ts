@@ -6,9 +6,9 @@ import { BehaviorSubject } from "rxjs";
 })
 export class BehaviorService {
   private _mousePosition = new BehaviorSubject({
-    x: 0, 
+    x: 0,
     y: 0
-  });  
+  });
   private _statusPosition = new BehaviorSubject({
     startMouseAt: "",
     dacingTimeLongest: "",
@@ -16,11 +16,16 @@ export class BehaviorService {
   });
 
   status$ = this._statusPosition.asObservable();
-  mouse$ = this._mousePosition.asObservable();
+  mousePosition$ = this._mousePosition.asObservable();
 
   _currentMousePos = this._mousePosition;
   _formerMousePos = this._mousePosition;
   isMouseMoved = signal(false); // false
+
+  init(){
+    console.log(`date: ${Date.now} | mov: ${this._mousePosition}`);
+    // console.log(``)
+  }
 
   updateMousePosition(x: number, y: number){
     this._mousePosition.next({x, y});
@@ -33,7 +38,7 @@ export class BehaviorService {
       return true;
     }
     else if( x+10 > x && x > x-10 || y+10 > y && y > y-10){ // 마우스 얼마 움직지 않았다면
-      this._currentMousePos.next({x,y}); 
+      this._currentMousePos.next({x,y});
       this._formerMousePos.next({x,y});
       return true;
     }
